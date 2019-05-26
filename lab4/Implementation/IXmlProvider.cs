@@ -5,6 +5,6 @@ namespace lab4.Implementation
 {
     public interface IXmlProvider
     {
-        XmlDocument GetDocumentFromStream(byte[] bytes);
+        XmlDocument GetDocumentFromBytes(byte[] bytes);
     }
 }

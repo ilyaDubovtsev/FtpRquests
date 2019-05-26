@@ -1,0 +1,30 @@
+@model System.Collections.Generic.List<lab4.Models.Procurement>
+
+@{
+    ViewBag.Title = "Закупки";
+    Layout = "_Layout";
+}
+
+<h2>Закупки</h2>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Имя</th>
+        <th scope="col">Архив</th>
+    </tr>
+    </thead>
+    <tbody>
+    @{int i = 0;}
+    @foreach (var p in Model)
+    {
+        <tr>
+            <th scope="row">@i</th>
+            <td><a href="@p.Url">@p.Name</a></td>
+            <td>@p.ArchiveName</td>
+        </tr>
+        i++;
+    }
+    </tbody>
+</table>

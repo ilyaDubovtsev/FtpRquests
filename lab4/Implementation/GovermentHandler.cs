@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
+using lab4.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lab4.Implementation
@@ -22,23 +24,35 @@ namespace lab4.Implementation
             this.xmlProvider = xmlProvider;
         }
 
-        public string FindDocument(string substring)
+        public List<Procurement> FindDocuments(string substring)
         {
             var zipNames = GetZipNames();
-            var stringBuilder = new StringBuilder();
+
+            var procurements = new List<Procurement>();
 
             foreach (var zipName in zipNames)
             {
-                stringBuilder.Append($"Архив {zipName}\n");
                 var documents = GetAllDocumentsFromZip(zipName);
 
                 foreach (var pair in documents)
                 {
-                    stringBuilder.Append($"\t- {pair.Key}\n");
+                    var name = pair.Key;
+                    if (pair.Value.Contains(substring))
+                    {
+                        var procurement = new Procurement()
+                        {
+                            Name = name,
+                            ArchiveName = zipName,
+                            Url = $"{uri}{zipName}",
+                            Value = pair.Value
+                        };
+
+                        procurements.Add(procurement);
+                    }
                 }
             }
 
-            return stringBuilder.ToString();
+            return procurements;
         }
 
         private List<string> GetZipNames()
@@ -46,7 +60,7 @@ namespace lab4.Implementation
             return ftpProvider.GetFilesInDirectory(uri, login, password);
         }
 
-        private Dictionary<string, XmlDocument> GetAllDocumentsFromZip(string zipName)
+        private Dictionary<string, string> GetAllDocumentsFromZip(string zipName)
         {
             var response = ftpProvider.GetResponse($"{uri}{zipName}", login, password);
 
@@ -66,18 +80,24 @@ namespace lab4.Implementation
 
             var decompressedFiles = ZipHelper.Unzip(allBytes.ToArray());
 
-            var xmlDocuments = new Dictionary<string, XmlDocument>(); //new List<XmlDocument>();
-
-            foreach (var pair in decompressedFiles)
-            {
-                if (pair.Key.EndsWith(".xml"))
-                {
-                    var xmlDocument = xmlProvider.GetDocumentFromStream(pair.Value);
-                    xmlDocuments[pair.Key] = xmlDocument;
-                }
-            }
-
-            return xmlDocuments;
+            return decompressedFiles
+                .Where(x => x.Key.EndsWith(".xml"))
+                .ToDictionary(
+                    k => k.Key,
+                    v => Encoding.Default.GetString(v.Value)
+                );
+//            var xmlDocuments = new Dictionary<string, XmlDocument>(); //new List<XmlDocument>();
+//
+//            foreach (var pair in decompressedFiles)
+//            {
+//                if (pair.Key.EndsWith(".xml"))
+//                {
+//                    var xmlDocument = xmlProvider.GetDocumentFromBytes(pair.Value);
+//                    xmlDocuments[pair.Key] = xmlDocument;
+//                }
+//            }
+//
+//            return xmlDocuments;
         }
     }
 }

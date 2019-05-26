@@ -2,7 +2,7 @@
 
 <div class="container" style="margin-top: 30%;">
 
-    @using (Html.BeginForm("Get", "Procurement", FormMethod.Get,  new { @class="form" }))
+    @using (Html.BeginForm("Get", "Procurement", FormMethod.Post,  new { @class="form" }))
     {
         
         @Html.AntiForgeryToken()

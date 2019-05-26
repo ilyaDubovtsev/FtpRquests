@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.IO;
 using lab4.Implementation;
+using lab4.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lab4.Controllers
@@ -14,10 +16,12 @@ namespace lab4.Controllers
             this.governmentHandler = governmentHandler;
         }
         
-        [HttpGet("/get")]
-        public string Get()
+        [HttpPost("/get")]
+        public IActionResult Get()
         {
-            return governmentHandler.FindDocument("abc");
+            var form = Request.Form;
+            var procurements = governmentHandler.FindDocuments(form["ContainedText"]);
+            return View(procurements);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace lab4.Implementation
 {
     public class XmlProvider : IXmlProvider
     {
-        public XmlDocument GetDocumentFromStream(byte[] bytes)
+        public XmlDocument GetDocumentFromBytes(byte[] bytes)
         {
             var xmlDocument = new XmlDocument();
             
