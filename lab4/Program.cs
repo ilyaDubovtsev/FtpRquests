@@ -19,6 +19,7 @@ namespace lab4
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://+:1313")
                 .UseStartup<Startup>();
     }
 }
